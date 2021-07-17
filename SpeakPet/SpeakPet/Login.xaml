@@ -12,7 +12,7 @@
         <Label Text="Senha:" FontSize="Title" Padding="30,10,30,10"/>
         <Entry Placeholder="" IsPassword="True" x:Name="password"/>
         <Button Text="Login" Clicked="Login_Clicked"></Button>
-        <Button Text="Register"></Button>
+        <Button Text="Register" Clicked="Register_Clicked"></Button>
     </StackLayout>
 
 </ContentPage>

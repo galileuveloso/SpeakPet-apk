@@ -7,28 +7,21 @@ namespace SpeakPet.services
     {
         private static IUsuarioService usuarioService;
         private static IAudioService audioSerivce;
-        private static ISpeakPetService speakPetService;
-       
+
+        public static string urlBase = "http://192.168.0.13:5000";
 
         public static IUsuarioService GetUsuarioService()
         {
             if (usuarioService == null)
-                usuarioService = new UsuarioService();
+                usuarioService = new UsuarioService(urlBase);
             return usuarioService;
         }
 
         public static IAudioService GetAudioService()
         {
             if (audioSerivce == null)
-                audioSerivce = new AudioService();
+                audioSerivce = new AudioService(urlBase);
             return audioSerivce;
-        }
-
-        public static ISpeakPetService GetSpeakPetService()
-        {
-            if (speakPetService == null)
-                speakPetService = new SpeakPetService();
-            return speakPetService;
         }
     }
 }

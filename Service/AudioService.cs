@@ -8,10 +8,9 @@ namespace Service
 {
     public class AudioService : IAudioService
     {
-        private readonly string urlBase = "http://192.168.0.13:60806/";
         private readonly IAudioServiceApi _client;
 
-        public AudioService()
+        public AudioService(string urlBase)
         {
             _client = RestService.For<IAudioServiceApi>(urlBase);
         }
