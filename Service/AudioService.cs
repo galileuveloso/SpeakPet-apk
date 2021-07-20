@@ -42,9 +42,9 @@ namespace Service
         public async Task<ListarAudiosResponse> ListarAudios(int idUsuaio)
         {
             var response = await _client.ListarAudios(idUsuaio).ConfigureAwait(false);
-            //string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            //ListarAudiosResponse resposta = JsonConvert.DeserializeObject<ListarAudiosResponse>(json);
-            return new ListarAudiosResponse();
+            string json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            ListarAudiosResponse resposta = JsonConvert.DeserializeObject<ListarAudiosResponse>(json);
+            return resposta;
         }
     }
 }

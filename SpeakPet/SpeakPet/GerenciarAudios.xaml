@@ -5,6 +5,31 @@
     <ContentPage.Content>
         <StackLayout>
             <Button Text="Adicionar Audio" Clicked="AdicionarAudio_Clicked"></Button>
+            <Entry x:Name="fileName" />
+            <Button Text="Salvar"  Clicked="SalvarAudio_Clicked"/>
+            <ListView x:Name="listaAudios"
+                      HasUnevenRows="True"
+                      ItemSelected="listaAudios_ItemSelected"
+                      ItemTapped="listaAudios_ItemTapped"
+                      >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <!-- por ser 1 coluna -->
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <!-- uma definicao pra cada coluna -->
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="1" Text="{Binding Titulo}"></Label>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
