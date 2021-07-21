@@ -13,6 +13,7 @@ namespace Dominio.Interfaces
         Task<AdicionarAudioResponse> AdicionarAudio(AdicionarAudioCommand command);
         Task<ListarAudiosResponse> ListarAudios(int idUsuaio);
         Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command);
+        Task<EditarAudioResponse> EditarAudio(EditarAudioCommand command);
     }
 
     public interface IAudioServiceApi

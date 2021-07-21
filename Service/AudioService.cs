@@ -4,6 +4,7 @@ using Dominio.Responses;
 using Newtonsoft.Json;
 using Refit;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Service
@@ -33,7 +34,7 @@ namespace Service
 
         public async Task<AdicionarAudioResponse> AdicionarAudio(AdicionarAudioCommand command)
         {
-            var response = await _client.AdicionarAudio(command).ConfigureAwait(false);
+            HttpContent response = await _client.AdicionarAudio(command).ConfigureAwait(false);
             string json = await response.ReadAsStringAsync().ConfigureAwait(false);
             AdicionarAudioResponse resposta = JsonConvert.DeserializeObject<AdicionarAudioResponse>(json);
             return resposta;
@@ -41,7 +42,7 @@ namespace Service
 
         public async Task<ListarAudiosResponse> ListarAudios(int idUsuaio)
         {
-            var response = await _client.ListarAudios(idUsuaio).ConfigureAwait(false);
+            HttpResponseMessage response = await _client.ListarAudios(idUsuaio).ConfigureAwait(false);
             string json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             ListarAudiosResponse resposta = JsonConvert.DeserializeObject<ListarAudiosResponse>(json);
             return resposta;
@@ -49,9 +50,17 @@ namespace Service
 
         public async Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command)
         {
-            var response = await _client.ExcluirAudio(command).ConfigureAwait(false);
+            HttpContent response = await _client.ExcluirAudio(command).ConfigureAwait(false);
             string json = await response.ReadAsStringAsync().ConfigureAwait(false);
             ExcluirAudioResponse resposta = JsonConvert.DeserializeObject<ExcluirAudioResponse>(json);
+            return resposta;
+        }
+
+        public async Task<EditarAudioResponse> EditarAudio(EditarAudioCommand command)
+        {
+            HttpContent response = await _client.EditarAudio(command).ConfigureAwait(false);
+            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
+            EditarAudioResponse resposta = JsonConvert.DeserializeObject<EditarAudioResponse>(json);
             return resposta;
         }
     }

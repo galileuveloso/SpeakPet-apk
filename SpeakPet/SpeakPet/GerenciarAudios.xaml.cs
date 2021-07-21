@@ -88,12 +88,12 @@ namespace SpeakPet
 
         private void listaAudios_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            
+            fileName.Text = (listaAudios.SelectedItem as AudioModel).Titulo;
         }
 
         private void listaAudios_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-
+            AudioUpload = null;
         }
 
         private async void ExcluirAudio_Clicked(object sender, EventArgs e)
@@ -101,7 +101,7 @@ namespace SpeakPet
             try
             {
                 if (listaAudios.SelectedItem == null)
-                    await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+                    await DisplayAlert("Erro", "Nenhum audio foi selecionado.", "Tentar Novamente");
                 else
                 {
                     AudioModel audio = listaAudios.SelectedItem as AudioModel;
@@ -111,10 +111,37 @@ namespace SpeakPet
                     if (response.Sucesso == false)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
                     else
-                    {
                         await DisplayAlert("Sucesso!", "Audio excluído com sucesso.", "Ok");
-                        PreencherAudios();
-                    }
+
+                    PreencherAudios();
+                }
+            }
+            catch
+            {
+                await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+            }
+        }
+
+        private async void SalvarEdicaoAudio_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                 if (String.IsNullOrEmpty(fileName.Text))
+                    await DisplayAlert("Nome Invalido.", "O Nome do áudio não pode ser vazio.", "Tentar Novamente");
+                else
+                {
+                    AudioModel audio = listaAudios.SelectedItem as AudioModel;
+                    EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, fileName.Text);
+                    EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
+
+                    if (response.Sucesso == false)
+                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                    else
+                        await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
+
+                    PreencherAudios();
+
+                    fileName.Text = "";
                 }
             }
             catch
