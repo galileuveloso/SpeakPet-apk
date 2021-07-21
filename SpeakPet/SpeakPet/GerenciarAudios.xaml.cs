@@ -20,26 +20,27 @@ namespace SpeakPet
 
         private IList<AudioModel> Audios { get; set; }
 
-        private FileResult AudioSelecionado { get; set; }
+        private FileResult AudioUpload { get; set; }
         
         public GerenciarAudios()
         {
             InitializeComponent();
             audioService = Services.GetAudioService();
             PreencherAudios();
+            BindingContext = this;
         }
 
         private async void AdicionarAudio_Clicked(object sender, EventArgs e)
         {
             try
             {
-                AudioSelecionado = await FilePicker.PickAsync(new PickOptions
+                AudioUpload = await FilePicker.PickAsync(new PickOptions
                 {
                     //TODO - Ver como selecionar o formato de audio apenas
                     FileTypes = FilePickerFileType.Videos,
                     PickerTitle = "Selecionar Audio"
                 });
-                fileName.Text = AudioSelecionado.FileName;
+                fileName.Text = AudioUpload.FileName;
             }
             catch
             {
@@ -51,13 +52,13 @@ namespace SpeakPet
         {
             try
             {
-                if (AudioSelecionado == null)
+                if (AudioUpload == null)
                     await DisplayAlert("Nenhum audio selecionado.", "Selecione ao menos um audio.", "Tentar Novamente");
-                else if (String.IsNullOrEmpty(AudioSelecionado.FileName))
+                else if (String.IsNullOrEmpty(AudioUpload.FileName))
                     await DisplayAlert("Nome Invalido.", "O Nome do áudio não pode ser vazio.", "Tentar Novamente");
                 else
                 {
-                    Stream stream = await AudioSelecionado.OpenReadAsync();
+                    Stream stream = await AudioUpload.OpenReadAsync();
 
                     AdicionarAudioCommand command = new AdicionarAudioCommand(fileName.Text, audioService.LerBytesAudio(stream), Services.IdUsuarioLogado);
                     AdicionarAudioResponse response = audioService.AdicionarAudio(command).GetAwaiter().GetResult();
@@ -67,7 +68,7 @@ namespace SpeakPet
                     else
                     {
                         await DisplayAlert("Sucesso!", "Audio adicionado com sucesso.", "Ok");
-                        AudioSelecionado = null;
+                        AudioUpload = null;
                         fileName.Text = "";
                     }
                 }
@@ -80,9 +81,9 @@ namespace SpeakPet
 
         private void PreencherAudios()
         {
+            //TODO - estudar isso pois bater sempre nesse cara pode ser ruim caso demore a request
             Audios = audioService.ListarAudios(Services.IdUsuarioLogado).GetAwaiter().GetResult().Audios.ToList();
             listaAudios.ItemsSource = Audios;
-            BindingContext = this;
         }
 
         private void listaAudios_ItemSelected(object sender, SelectedItemChangedEventArgs e)
@@ -93,6 +94,33 @@ namespace SpeakPet
         private void listaAudios_ItemTapped(object sender, ItemTappedEventArgs e)
         {
 
+        }
+
+        private async void ExcluirAudio_Clicked(object sender, EventArgs e)
+        {
+            try
+            {
+                if (listaAudios.SelectedItem == null)
+                    await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+                else
+                {
+                    AudioModel audio = listaAudios.SelectedItem as AudioModel;
+                    ExcluirAudioCommand command = new ExcluirAudioCommand(audio.Id.Value);
+                    ExcluirAudioResponse response = audioService.ExcluirAudio(command).GetAwaiter().GetResult();
+
+                    if (response.Sucesso == false)
+                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                    else
+                    {
+                        await DisplayAlert("Sucesso!", "Audio excluído com sucesso.", "Ok");
+                        PreencherAudios();
+                    }
+                }
+            }
+            catch
+            {
+                await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+            }
         }
     }
 }

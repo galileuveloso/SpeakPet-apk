@@ -46,5 +46,13 @@ namespace Service
             ListarAudiosResponse resposta = JsonConvert.DeserializeObject<ListarAudiosResponse>(json);
             return resposta;
         }
+
+        public async Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command)
+        {
+            var response = await _client.ExcluirAudio(command).ConfigureAwait(false);
+            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
+            ExcluirAudioResponse resposta = JsonConvert.DeserializeObject<ExcluirAudioResponse>(json);
+            return resposta;
+        }
     }
 }

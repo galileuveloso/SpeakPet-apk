@@ -12,6 +12,7 @@ namespace Dominio.Interfaces
         byte[] LerBytesAudio(Stream stream);
         Task<AdicionarAudioResponse> AdicionarAudio(AdicionarAudioCommand command);
         Task<ListarAudiosResponse> ListarAudios(int idUsuaio);
+        Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command);
     }
 
     public interface IAudioServiceApi
