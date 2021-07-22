@@ -21,7 +21,7 @@ namespace SpeakPet
         private IList<AudioModel> Audios { get; set; }
 
         private FileResult AudioUpload { get; set; }
-        
+
         public GerenciarAudios()
         {
             InitializeComponent();
@@ -99,7 +99,7 @@ namespace SpeakPet
             {
                 await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
             }
-        }   
+        }
 
         private void listaAudios_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
@@ -119,9 +119,14 @@ namespace SpeakPet
                     await DisplayAlert("Erro", "Nenhum audio foi selecionado.", "Tentar Novamente");
                 else
                 {
-                    ValidarSucessoExclusao(ExcluirAudio((listaAudios.SelectedItem as AudioModel).Id.Value));
+                    bool confirmacao = await DisplayAlert("Excluir Audio", "Deseja mesmo excluir o audio selecionado?", "Confirmar", "Cancelar");
 
-                    PreencherAudios();
+                    if (confirmacao)
+                    {
+                        ExcluirAudioResponse response = ExcluirAudio((listaAudios.SelectedItem as AudioModel).Id.Value);
+                        ValidarSucessoExclusao(response);
+                        PreencherAudios();
+                    }
                 }
             }
             catch
@@ -134,7 +139,7 @@ namespace SpeakPet
         {
             try
             {
-                 if (String.IsNullOrEmpty(fileName.Text))
+                if (String.IsNullOrEmpty(fileName.Text))
                     await DisplayAlert("Nome Invalido.", "O Nome do áudio não pode ser vazio.", "Tentar Novamente");
                 else
                 {
@@ -158,12 +163,17 @@ namespace SpeakPet
             }
         }
 
-        private void ExcluirAudioButton_Clicked(object sender, EventArgs e)
+        private async void ExcluirAudioButton_Clicked(object sender, EventArgs e)
         {
-            int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
-            ExcluirAudioResponse response = ExcluirAudio(idAudio);
-            ValidarSucessoExclusao(response);
-            PreencherAudios();
+            bool confirmacao = await DisplayAlert("Excluir Audio", "Deseja mesmo excluir o audio selecionado?", "Confirmar", "Cancelar");
+
+            if (confirmacao)
+            {
+                int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
+                ExcluirAudioResponse response = ExcluirAudio(idAudio);
+                ValidarSucessoExclusao(response);
+                PreencherAudios();
+            }
         }
     }
 }
