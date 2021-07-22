@@ -39,7 +39,7 @@ namespace SpeakPet
                         Navigation.RemovePage(this);
                     }
                 }   
-                catch(Exception ex)
+                catch
                 {
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
                 }

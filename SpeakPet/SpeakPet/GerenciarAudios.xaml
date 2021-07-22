@@ -25,6 +25,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <Label Grid.Column="1" Text="{Binding Titulo}"></Label>
+                                <Button Text="Excluir" CommandParameter="{Binding Id}" Clicked="ExcluirAudioButton_Clicked"></Button>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
