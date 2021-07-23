@@ -1,4 +1,5 @@
 ﻿using Dominio.Commands;
+using Dominio.Interfaces;
 using Dominio.Responses;
 using SpeakPet.services;
 using System;
@@ -10,9 +11,11 @@ namespace SpeakPet
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Register : ContentPage
     {
+        private readonly IUsuarioService usuarioService;
         public Register()
         {
             InitializeComponent();
+            usuarioService = Services.GetUsuarioService();
         }
 
         protected async void Registrar_Clicked(object sender, EventArgs e)
@@ -26,7 +29,7 @@ namespace SpeakPet
                 try
                 {
                     InserirUsuarioCommand command = new InserirUsuarioCommand(login.Text, password.Text);
-                    InserirUsuarioResponse response = Services.GetUsuarioService().InserirUsuario(command).GetAwaiter().GetResult();
+                    InserirUsuarioResponse response = usuarioService.InserirUsuario(command).GetAwaiter().GetResult();
 
                     if (response.Sucesso == false)
                     {
@@ -37,7 +40,7 @@ namespace SpeakPet
                         //chamo o home com as informacoes
                     }
                 }
-                catch (Exception ex)
+                catch
                 {
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
 

@@ -10,6 +10,8 @@ namespace SpeakPet.services
 
         public static string urlBase = "http://192.168.0.13:5000";
 
+        public static int IdUsuarioLogado { get; set; }
+
         public static IUsuarioService GetUsuarioService()
         {
             if (usuarioService == null)

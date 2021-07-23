@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SpeakPet.GerenciarAudios">
+    <ContentPage.Content>
+        <StackLayout>
+            <Button Text="Adicionar Audio" Clicked="AdicionarAudio_Clicked"></Button>
+            <Entry x:Name="fileName" />
+            <Button Text="Salvar"  Clicked="SalvarAudio_Clicked"/>
+            <ListView x:Name="listaAudios"
+                      HasUnevenRows="True"
+                      ItemSelected="listaAudios_ItemSelected"
+                      ItemTapped="listaAudios_ItemTapped"
+                      >
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <!-- por ser 1 coluna -->
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <!-- uma definicao pra cada coluna -->
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Grid.Column="1" Text="{Binding Titulo}"></Label>
+                                <Button Text="Excluir" CommandParameter="{Binding Id}" Clicked="ExcluirAudioButton_Clicked"></Button>
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button Text="Excluir"  Clicked="ExcluirAudio_Clicked"/>
+            <Button Text="SalvarEdicao"  Clicked="SalvarEdicaoAudio_Clicked"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

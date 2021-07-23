@@ -1,4 +1,5 @@
 ﻿using Dominio.Commands;
+using Dominio.Interfaces;
 using Dominio.Responses;
 using SpeakPet.services;
 using System;
@@ -8,9 +9,11 @@ namespace SpeakPet
 {
     public partial class MainPage : ContentPage
     {
+        private readonly IUsuarioService usuarioService;
         public MainPage()
         {
             InitializeComponent();
+            usuarioService = Services.GetUsuarioService();
         }
 
         private async void Login_Clicked(object sender, System.EventArgs e)
@@ -22,22 +25,21 @@ namespace SpeakPet
                 try
                 {
                     EfetuarLoginCommand command = new EfetuarLoginCommand(login.Text, password.Text);
-                    EfetuarLoginResponse response = Services.GetUsuarioService().EfetuarLogin(command).GetAwaiter().GetResult();
+                    EfetuarLoginResponse response = usuarioService.EfetuarLogin(command).GetAwaiter().GetResult();
 
                     if (response.Sucesso == true && response.IdUsuario == null)
-                    {
                         await DisplayAlert("Usuário Inválido", response.Mensagem, "Ok");
-                    }
                     else if (response.Sucesso == false)
-                    {
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
-                    }
                     else
                     {
+                        Services.IdUsuarioLogado = response.IdUsuario.Value;
                         //chamo a tela inicial
+                        await Navigation.PushAsync(new GerenciarAudios());
+                        Navigation.RemovePage(this);
                     }
-                }
-                catch (Exception ex)
+                }   
+                catch
                 {
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
                 }

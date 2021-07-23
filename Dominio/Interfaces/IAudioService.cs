@@ -1,6 +1,7 @@
 ﻿using Dominio.Commands;
 using Dominio.Responses;
 using Refit;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -8,7 +9,11 @@ namespace Dominio.Interfaces
 {
     public interface IAudioService
     {
+        byte[] LerBytesAudio(Stream stream);
+        Task<AdicionarAudioResponse> AdicionarAudio(AdicionarAudioCommand command);
         Task<ListarAudiosResponse> ListarAudios(int idUsuaio);
+        Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command);
+        Task<EditarAudioResponse> EditarAudio(EditarAudioCommand command);
     }
 
     public interface IAudioServiceApi
