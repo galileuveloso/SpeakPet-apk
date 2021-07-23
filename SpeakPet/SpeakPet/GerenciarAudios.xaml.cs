@@ -144,17 +144,23 @@ namespace SpeakPet
                 else
                 {
                     AudioModel audio = listaAudios.SelectedItem as AudioModel;
-                    EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, fileName.Text);
-                    EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
 
-                    if (response.Sucesso == false)
-                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
-                    else
-                        await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
+                    bool confirmacao = await DisplayAlert("Editar Audio", "Deseja alterar de '" + audio.Titulo + "' para '" + fileName.Text + "'?", "Confirmar", "Cancelar");
 
-                    PreencherAudios();
+                    if (confirmacao)
+                    {
+                        EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, fileName.Text);
+                        EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
 
-                    fileName.Text = "";
+                        if (response.Sucesso == false)
+                            await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                        else
+                            await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
+
+                        PreencherAudios();
+
+                        fileName.Text = "";
+                    }
                 }
             }
             catch
