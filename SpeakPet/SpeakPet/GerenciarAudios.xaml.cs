@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -81,7 +80,7 @@ namespace SpeakPet
                 else
                 {
                     Stream stream = await AudioUpload.OpenReadAsync();
-                    
+
                     AdicionarAudioCommand command = new AdicionarAudioCommand(fileName.Text, audioService.LerBytesAudio(stream), Services.IdUsuarioLogado);
                     AdicionarAudioResponse response = audioService.AdicionarAudio(command).GetAwaiter().GetResult();
 
@@ -112,74 +111,24 @@ namespace SpeakPet
             AudioUpload = null;
         }
 
-        private async void ExcluirAudio_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                if (listaAudios.SelectedItem == null)
-                    await DisplayAlert("Erro", "Nenhum audio foi selecionado.", "Tentar Novamente");
-                else
-                {
-                    bool confirmacao = await DisplayAlert("Excluir Audio", "Deseja mesmo excluir o audio selecionado?", "Confirmar", "Cancelar");
-
-                    if (confirmacao)
-                    {
-                        ExcluirAudioResponse response = ExcluirAudio((listaAudios.SelectedItem as AudioModel).Id.Value);
-                        ValidarSucessoExclusao(response);
-                        PreencherAudios();
-                    }
-                }
-            }
-            catch
-            {
-                await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
-            }
-        }
-
-        private async void SalvarEdicaoAudio_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                if (String.IsNullOrEmpty(fileName.Text))
-                    await DisplayAlert("´Titulo Invalido.", "O Titulo do áudio não pode ser vazio.", "Tentar Novamente");
-                else
-                {
-                    AudioModel audio = listaAudios.SelectedItem as AudioModel;
-
-                    bool confirmacao = await DisplayAlert("Editar Audio", "Deseja alterar de '" + audio.Titulo + "' para '" + fileName.Text + "'?", "Confirmar", "Cancelar");
-
-                    if (confirmacao)
-                    {
-                        EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, fileName.Text);
-                        EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
-
-                        if (response.Sucesso == false)
-                            await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
-                        else
-                            await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
-
-                        PreencherAudios();
-
-                        fileName.Text = "";
-                    }
-                }
-            }
-            catch
-            {
-                await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
-            }
-        }
-
         private async void ExcluirAudioButton_Clicked(object sender, EventArgs e)
         {
             bool confirmacao = await DisplayAlert("Excluir Audio", "Deseja mesmo excluir o audio selecionado?", "Confirmar", "Cancelar");
 
             if (confirmacao)
             {
-                int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
-                ExcluirAudioResponse response = ExcluirAudio(idAudio);
-                ValidarSucessoExclusao(response);
-                PreencherAudios();
+                try
+                {
+                    int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
+                    ExcluirAudioResponse response = ExcluirAudio(idAudio);
+                    ValidarSucessoExclusao(response);
+                    PreencherAudios();
+                }
+                catch
+                {
+                    await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+
+                }
             }
         }
 
@@ -196,16 +145,23 @@ namespace SpeakPet
                 await DisplayAlert("Sem mudanças", "Não houve nenhuma alteração.", "Ok");
             else
             {
-                EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, novoTitulo);
-                EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
+                try
+                {
+                    EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, novoTitulo);
+                    EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
 
-                if (response.Sucesso == false)
-                    await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
-                else
-                    await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
+                    if (response.Sucesso == false)
+                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                    else
+                        await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
 
-                PreencherAudios();
-            }     
+                    PreencherAudios();
+                }
+                catch
+                {
+                    await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+                }
+            }
         }
     }
 }

@@ -33,8 +33,6 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <Button Text="Excluir"  Clicked="ExcluirAudio_Clicked"/>
-            <Button Text="SalvarEdicao"  Clicked="SalvarEdicaoAudio_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
