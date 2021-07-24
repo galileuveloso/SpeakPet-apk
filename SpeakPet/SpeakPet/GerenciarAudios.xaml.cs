@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -80,7 +81,7 @@ namespace SpeakPet
                 else
                 {
                     Stream stream = await AudioUpload.OpenReadAsync();
-
+                    
                     AdicionarAudioCommand command = new AdicionarAudioCommand(fileName.Text, audioService.LerBytesAudio(stream), Services.IdUsuarioLogado);
                     AdicionarAudioResponse response = audioService.AdicionarAudio(command).GetAwaiter().GetResult();
 
@@ -140,7 +141,7 @@ namespace SpeakPet
             try
             {
                 if (String.IsNullOrEmpty(fileName.Text))
-                    await DisplayAlert("Nome Invalido.", "O Nome do áudio não pode ser vazio.", "Tentar Novamente");
+                    await DisplayAlert("´Titulo Invalido.", "O Titulo do áudio não pode ser vazio.", "Tentar Novamente");
                 else
                 {
                     AudioModel audio = listaAudios.SelectedItem as AudioModel;
@@ -180,6 +181,31 @@ namespace SpeakPet
                 ValidarSucessoExclusao(response);
                 PreencherAudios();
             }
+        }
+
+        private async void EditarAudioButton_Clicked(object sender, EventArgs e)
+        {
+            AudioModel audio = Audios.Where(x => x.Id == int.Parse((sender as Button).CommandParameter.ToString())).FirstOrDefault();
+            string novoTitulo = await DisplayPromptAsync("Editar Audio", "Titulo:", "Ok", "Cancelar", "Insira um titulo...", 255, Keyboard.Text, audio.Titulo);
+
+            if (novoTitulo != null && String.IsNullOrEmpty(novoTitulo))
+                await DisplayAlert("Titulo Invalido.", "O Titulo do áudio não pode ser vazio.", "Tentar Novamente");
+            else if (novoTitulo == null)
+                return;
+            else if (novoTitulo == audio.Titulo)
+                await DisplayAlert("Sem mudanças", "Não houve nenhuma alteração.", "Ok");
+            else
+            {
+                EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, novoTitulo);
+                EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
+
+                if (response.Sucesso == false)
+                    await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                else
+                    await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
+
+                PreencherAudios();
+            }     
         }
     }
 }

@@ -17,15 +17,17 @@
                         <ViewCell>
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <!-- por ser 1 coluna -->
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <!-- uma definicao pra cada coluna -->
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Grid.Column="1" Text="{Binding Titulo}"></Label>
-                                <Button Text="Excluir" CommandParameter="{Binding Id}" Clicked="ExcluirAudioButton_Clicked"></Button>
+                                <Button Grid.Column="1" Text="Editar" CommandParameter="{Binding Id}" Clicked="EditarAudioButton_Clicked"></Button>
+                                <Label Grid.Column="2" Text="{Binding Titulo}"></Label>
+                                <Button Grid.Column="3" Text="Excluir" CommandParameter="{Binding Id}" Clicked="ExcluirAudioButton_Clicked"></Button>
                             </Grid>
                         </ViewCell>
                     </DataTemplate>
