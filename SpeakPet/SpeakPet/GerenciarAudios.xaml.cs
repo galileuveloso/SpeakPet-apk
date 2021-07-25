@@ -20,8 +20,6 @@ namespace SpeakPet
 
         private IList<AudioModel> Audios { get; set; }
 
-        private FileResult AudioUpload { get; set; }
-
         public GerenciarAudios()
         {
             InitializeComponent();
@@ -53,35 +51,30 @@ namespace SpeakPet
 
         private async void AdicionarAudio_Clicked(object sender, EventArgs e)
         {
+            FileResult audioUpload = null;
             try
             {
-                AudioUpload = await FilePicker.PickAsync(new PickOptions
+                audioUpload = await FilePicker.PickAsync(new PickOptions
                 {
                     //TODO - Ver como selecionar o formato de audio apenas
                     FileTypes = FilePickerFileType.Videos,
                     PickerTitle = "Selecionar Audio"
                 });
-                fileName.Text = AudioUpload.FileName;
-            }
-            catch
-            {
-                await DisplayAlert("Erro", "Erro ao tentar abrir os audios...", "Tentar Novamente");
-            }
-        }
 
-        private async void SalvarAudio_Clicked(object sender, EventArgs e)
-        {
-            try
-            {
-                if (AudioUpload == null)
+                if (audioUpload == null)
                     await DisplayAlert("Nenhum audio selecionado.", "Selecione ao menos um audio.", "Tentar Novamente");
-                else if (String.IsNullOrEmpty(AudioUpload.FileName))
-                    await DisplayAlert("Nome Invalido.", "O Nome do áudio não pode ser vazio.", "Tentar Novamente");
                 else
                 {
-                    Stream stream = await AudioUpload.OpenReadAsync();
+                    string titulo = await DisplayPromptAsync("Selecionar Audio", "Titulo:", "Ok", "Cancelar", "Insira um titulo...", 255, Keyboard.Text, audioUpload.FileName);
 
-                    AdicionarAudioCommand command = new AdicionarAudioCommand(fileName.Text, audioService.LerBytesAudio(stream), Services.IdUsuarioLogado);
+                    if (titulo != null && String.IsNullOrEmpty(titulo))
+                        await DisplayAlert("Titulo Invalido.", "O Titulo do áudio não pode ser vazio.", "Tentar Novamente");
+                    else if (titulo == null)
+                        return;
+
+                    Stream stream = await audioUpload.OpenReadAsync();
+
+                    AdicionarAudioCommand command = new AdicionarAudioCommand(titulo, audioService.LerBytesAudio(stream), Services.IdUsuarioLogado);
                     AdicionarAudioResponse response = audioService.AdicionarAudio(command).GetAwaiter().GetResult();
 
                     if (response.Sucesso == false)
@@ -89,26 +82,27 @@ namespace SpeakPet
                     else
                     {
                         await DisplayAlert("Sucesso!", "Audio adicionado com sucesso.", "Ok");
-                        AudioUpload = null;
-                        fileName.Text = "";
                         PreencherAudios();
                     }
                 }
             }
             catch
             {
-                await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+                if(audioUpload == null)
+                    await DisplayAlert("Erro", "Erro ao tentar abrir os audios...", "Tentar Novamente");
+                else
+                    await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
             }
         }
 
         private void listaAudios_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            fileName.Text = (listaAudios.SelectedItem as AudioModel).Titulo;
+
         }
 
         private void listaAudios_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            AudioUpload = null;
+
         }
 
         private async void ExcluirAudioButton_Clicked(object sender, EventArgs e)
