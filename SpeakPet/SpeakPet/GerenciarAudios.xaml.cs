@@ -54,10 +54,15 @@ namespace SpeakPet
             FileResult audioUpload = null;
             try
             {
+                var customFile = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
+                {
+                    { DevicePlatform.Android, new[] {"audio/x-mp3", "audio/mp3", "audio/mpeg3", "audio/mpeg" } },
+                    { DevicePlatform.iOS, new[] { "audio/x-mp3", "audio/mp3", "audio/mpeg3", "audio/mpeg" } },
+                    { DevicePlatform.Unknown, new[] { "audio/x-mp3", "audio/mp3", "audio/mpeg3", "audio/mpeg" } }
+                });
                 audioUpload = await FilePicker.PickAsync(new PickOptions
                 {
-                    //TODO - Ver como selecionar o formato de audio apenas
-                    FileTypes = FilePickerFileType.Videos,
+                    FileTypes = customFile,
                     PickerTitle = "Selecionar Audio"
                 });
 
