@@ -1,16 +1,15 @@
-﻿namespace Dominio.Commands
+﻿using Dominio.Models;
+using System.Collections.Generic;
+
+namespace Dominio.Commands
 {
     public class AdicionarAudioCommand
     {
-        public AdicionarAudioCommand(string titulo, byte[] bytes, int idUsuario)
+        public AdicionarAudioCommand(IList<AudioModel> audios)
         {
-            Titulo = titulo;
-            Bytes = bytes;
-            IdUsuario = idUsuario;
+            Audios = audios;
         }
 
-        public string Titulo { get; set; }
-        public byte[] Bytes { get; set; }
-        public int IdUsuario { get; set; }
+        public IList<AudioModel> Audios { get; set; }
     }
 }
