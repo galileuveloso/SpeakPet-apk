@@ -5,7 +5,6 @@ using Dominio.Responses;
 using SpeakPet.services;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -30,7 +29,6 @@ namespace SpeakPet
 
         private void PreencherAudios()
         {
-            //TODO - estudar isso pois bater sempre nesse cara pode ser ruim caso demore a request
             Audios = audioService.ListarAudios(Services.IdUsuarioLogado).GetAwaiter().GetResult().Audios.ToList();
             listaAudios.ItemsSource = Audios;
         }
@@ -51,7 +49,7 @@ namespace SpeakPet
 
         private async void AdicionarAudio_Clicked(object sender, EventArgs e)
         {
-            FileResult audioUpload = null;
+            IEnumerable<FileResult> audiosUpload = new List<FileResult>();
             try
             {
                 var customFile = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
@@ -60,40 +58,35 @@ namespace SpeakPet
                     { DevicePlatform.iOS, new[] { "audio/x-mp3", "audio/mp3", "audio/mpeg3", "audio/mpeg" } },
                     { DevicePlatform.Unknown, new[] { "audio/x-mp3", "audio/mp3", "audio/mpeg3", "audio/mpeg" } }
                 });
-                audioUpload = await FilePicker.PickAsync(new PickOptions
+                audiosUpload = await FilePicker.PickMultipleAsync(new PickOptions
                 {
                     FileTypes = customFile,
                     PickerTitle = "Selecionar Audio"
                 });
 
-                if (audioUpload == null)
+                if (audiosUpload == null || audiosUpload.Count() == 0 || !audiosUpload.Any())
                     await DisplayAlert("Nenhum audio selecionado.", "Selecione ao menos um audio.", "Tentar Novamente");
                 else
                 {
-                    string titulo = await DisplayPromptAsync("Selecionar Audio", "Titulo:", "Ok", "Cancelar", "Insira um titulo...", 255, Keyboard.Text, audioUpload.FileName);
+                    IList<AudioModel> audios = new List<AudioModel>();
+                    foreach (FileResult fileResult in audiosUpload)
+                        audios.Add(new AudioModel(fileResult.FileName, audioService.LerBytesAudio(await fileResult.OpenReadAsync()), Services.IdUsuarioLogado));
 
-                    if (titulo != null && String.IsNullOrEmpty(titulo))
-                        await DisplayAlert("Titulo Invalido.", "O Titulo do áudio não pode ser vazio.", "Tentar Novamente");
-                    else if (titulo == null)
-                        return;
-
-                    Stream stream = await audioUpload.OpenReadAsync();
-
-                    AdicionarAudioCommand command = new AdicionarAudioCommand(titulo, audioService.LerBytesAudio(stream), Services.IdUsuarioLogado);
+                    AdicionarAudioCommand command = new AdicionarAudioCommand(audios);
                     AdicionarAudioResponse response = audioService.AdicionarAudio(command).GetAwaiter().GetResult();
 
                     if (response.Sucesso == false)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
                     else
                     {
-                        await DisplayAlert("Sucesso!", "Audio adicionado com sucesso.", "Ok");
+                        await DisplayAlert("Sucesso!", "Audio(s) adicionado(s) com sucesso.", "Ok");
                         PreencherAudios();
                     }
                 }
             }
             catch
             {
-                if(audioUpload == null)
+                if (audiosUpload == null)
                     await DisplayAlert("Erro", "Erro ao tentar abrir os audios...", "Tentar Novamente");
                 else
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
