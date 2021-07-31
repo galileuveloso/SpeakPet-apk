@@ -1,35 +1,28 @@
 ﻿using Dominio.Commands;
 using Dominio.Interfaces;
+using Dominio.Interfaces.Api;
 using Dominio.Responses;
-using Newtonsoft.Json;
-using Refit;
-using System.Threading.Tasks;
+using Service.Api;
 
 namespace Service
 {
     public class UsuarioService : IUsuarioService
     {
-        private readonly IUsuarioApi _client;
+        private readonly IUsuarioApiService usuarioApiService;
 
         public UsuarioService(string urlBase)
         {
-            _client = RestService.For<IUsuarioApi>(urlBase);
+            usuarioApiService = new UsuarioApiService(urlBase);
         }
 
-        public async Task<EfetuarLoginResponse> EfetuarLogin(EfetuarLoginCommand command)
+        public EfetuarLoginResponse EfetuarLogin(string login, string senha)
         {
-            var response = await _client.EfetuarLogin(command).ConfigureAwait(false);
-            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            EfetuarLoginResponse resposta = JsonConvert.DeserializeObject<EfetuarLoginResponse>(json);
-            return resposta;
+            return usuarioApiService.EfetuarLogin(new EfetuarLoginCommand(login, senha)).GetAwaiter().GetResult();
         }
 
-        public async Task<InserirUsuarioResponse> InserirUsuario(InserirUsuarioCommand command)
+        public InserirUsuarioResponse InserirUsuario(string login, string senha)
         {
-            var response = await _client.InserirUsuario(command).ConfigureAwait(false);
-            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            InserirUsuarioResponse resposta = JsonConvert.DeserializeObject<InserirUsuarioResponse>(json);
-            return resposta;
+            return usuarioApiService.InserirUsuario(new InserirUsuarioCommand(login, senha)).GetAwaiter().GetResult();
         }
     }
 }

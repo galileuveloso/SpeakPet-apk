@@ -14,6 +14,4 @@ namespace Dominio.Interfaces
         ExcluirAudioResponse ExcluirAudio(int idAudio);
         EditarAudioResponse EditarAudio(int idAudio, string novoTitulo);
     }
-
-
 }
