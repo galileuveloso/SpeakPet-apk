@@ -31,6 +31,7 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
+            <Button Text="Link YT" Clicked="AdicionarAudioYouTube_Clicked"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -1,11 +1,13 @@
 ﻿using Dominio.Commands;
 using Dominio.Interfaces;
 using Dominio.Models;
+using Dominio.Models.Visualizacao;
 using Dominio.Responses;
 using SpeakPet.services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using VideoLibrary;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -17,7 +19,7 @@ namespace SpeakPet
     {
         private readonly IAudioService audioService;
 
-        private IList<AudioModel> Audios { get; set; }
+        private IList<ItemListaAudio> Audios { get; set; }
 
         public GerenciarAudios()
         {
@@ -29,7 +31,7 @@ namespace SpeakPet
 
         private void PreencherAudios()
         {
-            Audios = audioService.ListarAudios(Services.IdUsuarioLogado).GetAwaiter().GetResult().Audios.ToList();
+            Audios = audioService.ListarAudios(Services.IdUsuarioLogado).GetAwaiter().GetResult().Audios;
             listaAudios.ItemsSource = Audios;
         }
 
@@ -126,7 +128,7 @@ namespace SpeakPet
 
         private async void EditarAudioButton_Clicked(object sender, EventArgs e)
         {
-            AudioModel audio = Audios.Where(x => x.Id == int.Parse((sender as Button).CommandParameter.ToString())).FirstOrDefault();
+            AudioModel audio = new AudioModel(Audios.Where(x => x.Id == int.Parse((sender as Button).CommandParameter.ToString())).FirstOrDefault());
             string novoTitulo = await DisplayPromptAsync("Editar Audio", "Titulo:", "Ok", "Cancelar", "Insira um titulo...", 255, Keyboard.Text, audio.Titulo);
 
             if (novoTitulo != null && String.IsNullOrEmpty(novoTitulo))
@@ -148,6 +150,48 @@ namespace SpeakPet
                         await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
 
                     PreencherAudios();
+                }
+                catch
+                {
+                    await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
+                }
+            }
+        }
+
+        private async void AdicionarAudioYouTube_Clicked(object sender, EventArgs e)
+        {
+            string url = await DisplayPromptAsync("YouTube", "Insira o Link do video que deseja importar.");
+
+            if (String.IsNullOrEmpty(url))
+                return;
+            else
+            {
+                YouTube yt = YouTube.Default;
+                Video video;
+                try
+                {
+                    video = yt.GetVideo(url);
+                }
+                catch
+                {
+                    await DisplayAlert("Erro", "Nenhum video encontrado com este link...", "Tentar Novamente");
+                    return;
+                }
+
+                try
+                {
+                    AudioYouTubeModel audio = new AudioYouTubeModel(video.FullName, url, Services.IdUsuarioLogado);
+
+                    AdicionarAudioYouTubeCommand command = new AdicionarAudioYouTubeCommand(audio);
+                    AdicionarAudioYouTubeResponse response = audioService.AdicionarAudioYouTube(command).GetAwaiter().GetResult();
+
+                    if (response.Sucesso == false)
+                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                    else
+                    {
+                        await DisplayAlert("Sucesso!", "Audio adicionado com sucesso.", "Ok");
+                        PreencherAudios();
+                    }
                 }
                 catch
                 {

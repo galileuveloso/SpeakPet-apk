@@ -11,6 +11,7 @@ namespace Dominio.Interfaces
     {
         byte[] LerBytesAudio(Stream stream);
         Task<AdicionarAudioResponse> AdicionarAudio(AdicionarAudioCommand command);
+        Task<AdicionarAudioYouTubeResponse> AdicionarAudioYouTube(AdicionarAudioYouTubeCommand command);
         Task<ListarAudiosResponse> ListarAudios(int idUsuaio);
         Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command);
         Task<EditarAudioResponse> EditarAudio(EditarAudioCommand command);
@@ -23,6 +24,9 @@ namespace Dominio.Interfaces
 
         [Post("/audio/adicionar")]
         Task<HttpContent> AdicionarAudio([Body] AdicionarAudioCommand command);
+
+        [Post("/audio/adicionaryt")]
+        Task<HttpContent> AdicionarAudioYouTube([Body] AdicionarAudioYouTubeCommand command);
 
         [Delete("/audio/excluir")]
         Task<HttpContent> ExcluirAudio([Body] ExcluirAudioCommand command);
