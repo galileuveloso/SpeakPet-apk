@@ -1,5 +1,4 @@
-﻿using Dominio.Commands;
-using Dominio.Interfaces;
+﻿using Dominio.Interfaces;
 using Dominio.Responses;
 using SpeakPet.services;
 using System;
@@ -24,8 +23,7 @@ namespace SpeakPet
             {
                 try
                 {
-                    EfetuarLoginCommand command = new EfetuarLoginCommand(login.Text, password.Text);
-                    EfetuarLoginResponse response = usuarioService.EfetuarLogin(command).GetAwaiter().GetResult();
+                    EfetuarLoginResponse response = usuarioService.EfetuarLogin(login.Text, password.Text);
 
                     if (response.Sucesso == true && response.IdUsuario == null)
                         await DisplayAlert("Usuário Inválido", response.Mensagem, "Ok");
@@ -38,8 +36,8 @@ namespace SpeakPet
                         await Navigation.PushAsync(new GerenciarAudios());
                         Navigation.RemovePage(this);
                     }
-                }   
-                catch(Exception ex)
+                }
+                catch
                 {
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
                 }

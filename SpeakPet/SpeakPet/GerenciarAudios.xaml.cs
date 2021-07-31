@@ -1,5 +1,4 @@
-﻿using Dominio.Commands;
-using Dominio.Interfaces;
+﻿using Dominio.Interfaces;
 using Dominio.Models;
 using Dominio.Models.Visualizacao;
 using Dominio.Responses;
@@ -31,22 +30,18 @@ namespace SpeakPet
 
         private void PreencherAudios()
         {
-            Audios = audioService.ListarAudios(Services.IdUsuarioLogado).GetAwaiter().GetResult().Audios;
+            Audios = audioService.ListarAudios(Services.IdUsuarioLogado).Audios;
             listaAudios.ItemsSource = Audios;
         }
 
-        private ExcluirAudioResponse ExcluirAudio(int idAudio)
+        private void listaAudios_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            ExcluirAudioCommand command = new ExcluirAudioCommand(idAudio);
-            return audioService.ExcluirAudio(command).GetAwaiter().GetResult();
+
         }
 
-        private async void ValidarSucessoExclusao(ExcluirAudioResponse response)
+        private void listaAudios_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            if (response.Sucesso == false)
-                await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
-            else
-                await DisplayAlert("Sucesso!", "Audio excluído com sucesso.", "Ok");
+
         }
 
         private async void AdicionarAudio_Clicked(object sender, EventArgs e)
@@ -74,8 +69,7 @@ namespace SpeakPet
                     foreach (FileResult fileResult in audiosUpload)
                         audios.Add(new AudioModel(fileResult.FileName, audioService.LerBytesAudio(await fileResult.OpenReadAsync()), Services.IdUsuarioLogado));
 
-                    AdicionarAudioCommand command = new AdicionarAudioCommand(audios);
-                    AdicionarAudioResponse response = audioService.AdicionarAudio(command).GetAwaiter().GetResult();
+                    AdicionarAudioResponse response = audioService.AdicionarAudio(audios);
 
                     if (response.Sucesso == false)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
@@ -95,16 +89,6 @@ namespace SpeakPet
             }
         }
 
-        private void listaAudios_ItemSelected(object sender, SelectedItemChangedEventArgs e)
-        {
-
-        }
-
-        private void listaAudios_ItemTapped(object sender, ItemTappedEventArgs e)
-        {
-
-        }
-
         private async void ExcluirAudioButton_Clicked(object sender, EventArgs e)
         {
             bool confirmacao = await DisplayAlert("Excluir Audio", "Deseja mesmo excluir o audio selecionado?", "Confirmar", "Cancelar");
@@ -114,14 +98,18 @@ namespace SpeakPet
                 try
                 {
                     int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
-                    ExcluirAudioResponse response = ExcluirAudio(idAudio);
-                    ValidarSucessoExclusao(response);
+                    ExcluirAudioResponse response = audioService.ExcluirAudio(idAudio);
+
+                    if (response.Sucesso == false)
+                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                    else
+                        await DisplayAlert("Sucesso!", "Audio excluído com sucesso.", "Ok");
+
                     PreencherAudios();
                 }
                 catch
                 {
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
-
                 }
             }
         }
@@ -141,8 +129,7 @@ namespace SpeakPet
             {
                 try
                 {
-                    EditarAudioCommand command = new EditarAudioCommand(audio.Id.Value, novoTitulo);
-                    EditarAudioResponse response = audioService.EditarAudio(command).GetAwaiter().GetResult();
+                    EditarAudioResponse response = audioService.EditarAudio(audio.Id.Value, novoTitulo);
 
                     if (response.Sucesso == false)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
@@ -180,10 +167,7 @@ namespace SpeakPet
 
                 try
                 {
-                    AudioYouTubeModel audio = new AudioYouTubeModel(video.FullName, url, Services.IdUsuarioLogado);
-
-                    AdicionarAudioYouTubeCommand command = new AdicionarAudioYouTubeCommand(audio);
-                    AdicionarAudioYouTubeResponse response = audioService.AdicionarAudioYouTube(command).GetAwaiter().GetResult();
+                    AdicionarAudioYouTubeResponse response = audioService.AdicionarAudioYouTube(video.FullName, url, Services.IdUsuarioLogado);
 
                     if (response.Sucesso == false)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
