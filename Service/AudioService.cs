@@ -1,21 +1,21 @@
 ﻿using Dominio.Commands;
 using Dominio.Interfaces;
+using Dominio.Interfaces.Api;
+using Dominio.Models;
 using Dominio.Responses;
-using Newtonsoft.Json;
-using Refit;
+using Service.Api;
+using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace Service
 {
     public class AudioService : IAudioService
     {
-        private readonly IAudioServiceApi _client;
+        private readonly IAudioApiService audioApiService;
 
         public AudioService(string urlBase)
         {
-            _client = RestService.For<IAudioServiceApi>(urlBase);
+            audioApiService = new AudioApiService(urlBase);
         }
 
         public byte[] LerBytesAudio(Stream stream)
@@ -32,44 +32,29 @@ namespace Service
             }
         }
 
-        public async Task<AdicionarAudioResponse> AdicionarAudio(AdicionarAudioCommand command)
+        public AdicionarAudioResponse AdicionarAudio(IList<AudioModel> audios)
         {
-            HttpContent response = await _client.AdicionarAudio(command).ConfigureAwait(false);
-            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            AdicionarAudioResponse resposta = JsonConvert.DeserializeObject<AdicionarAudioResponse>(json);
-            return resposta;
+            return audioApiService.AdicionarAudio(new AdicionarAudioCommand(audios)).GetAwaiter().GetResult();
         }
 
-        public async Task<AdicionarAudioYouTubeResponse> AdicionarAudioYouTube(AdicionarAudioYouTubeCommand command)
+        public AdicionarAudioYouTubeResponse AdicionarAudioYouTube(string titulo, string linkYouTube, int idUsuario)
         {
-            HttpContent response = await _client.AdicionarAudioYouTube(command).ConfigureAwait(false);
-            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            AdicionarAudioYouTubeResponse resposta = JsonConvert.DeserializeObject<AdicionarAudioYouTubeResponse>(json);
-            return resposta;
+            return audioApiService.AdicionarAudioYouTube(new AdicionarAudioYouTubeCommand(new AudioYouTubeModel(titulo, linkYouTube, idUsuario))).GetAwaiter().GetResult();
         }
 
-        public async Task<ListarAudiosResponse> ListarAudios(int idUsuaio)
+        public ListarAudiosResponse ListarAudios(int idUsuaio)
         {
-            HttpResponseMessage response = await _client.ListarAudios(idUsuaio).ConfigureAwait(false);
-            string json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            ListarAudiosResponse resposta = JsonConvert.DeserializeObject<ListarAudiosResponse>(json);
-            return resposta;
+            return audioApiService.ListarAudios(idUsuaio).GetAwaiter().GetResult();
         }
 
-        public async Task<ExcluirAudioResponse> ExcluirAudio(ExcluirAudioCommand command)
+        public ExcluirAudioResponse ExcluirAudio(int idAudio)
         {
-            HttpContent response = await _client.ExcluirAudio(command).ConfigureAwait(false);
-            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            ExcluirAudioResponse resposta = JsonConvert.DeserializeObject<ExcluirAudioResponse>(json);
-            return resposta;
+            return audioApiService.ExcluirAudio(new ExcluirAudioCommand(idAudio)).GetAwaiter().GetResult();
         }
 
-        public async Task<EditarAudioResponse> EditarAudio(EditarAudioCommand command)
+        public EditarAudioResponse EditarAudio(int idAudio, string novoTitulo)
         {
-            HttpContent response = await _client.EditarAudio(command).ConfigureAwait(false);
-            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
-            EditarAudioResponse resposta = JsonConvert.DeserializeObject<EditarAudioResponse>(json);
-            return resposta;
+            return audioApiService.EditarAudio(new EditarAudioCommand(idAudio, novoTitulo)).GetAwaiter().GetResult();
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Dominio.Commands;
-using Dominio.Interfaces;
+﻿using Dominio.Interfaces;
 using Dominio.Responses;
 using SpeakPet.services;
 using System;
@@ -28,8 +27,7 @@ namespace SpeakPet
             {
                 try
                 {
-                    InserirUsuarioCommand command = new InserirUsuarioCommand(login.Text, password.Text);
-                    InserirUsuarioResponse response = usuarioService.InserirUsuario(command).GetAwaiter().GetResult();
+                    InserirUsuarioResponse response = usuarioService.InserirUsuario(login.Text, password.Text);
 
                     if (response.Sucesso == false)
                     {
