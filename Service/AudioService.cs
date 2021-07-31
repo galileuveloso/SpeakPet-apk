@@ -40,6 +40,14 @@ namespace Service
             return resposta;
         }
 
+        public async Task<AdicionarAudioYouTubeResponse> AdicionarAudioYouTube(AdicionarAudioYouTubeCommand command)
+        {
+            HttpContent response = await _client.AdicionarAudioYouTube(command).ConfigureAwait(false);
+            string json = await response.ReadAsStringAsync().ConfigureAwait(false);
+            AdicionarAudioYouTubeResponse resposta = JsonConvert.DeserializeObject<AdicionarAudioYouTubeResponse>(json);
+            return resposta;
+        }
+
         public async Task<ListarAudiosResponse> ListarAudios(int idUsuaio)
         {
             HttpResponseMessage response = await _client.ListarAudios(idUsuaio).ConfigureAwait(false);
