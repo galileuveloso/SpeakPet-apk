@@ -17,6 +17,7 @@ namespace SpeakPet
     public partial class GerenciarAudios : ContentPage
     {
         private readonly IAudioService audioService;
+        private readonly IReproducaoService reproducaoService;
 
         private IList<ItemListaAudio> Audios { get; set; }
 
@@ -24,6 +25,7 @@ namespace SpeakPet
         {
             InitializeComponent();
             audioService = Services.GetAudioService();
+            reproducaoService = Services.GetReproducaoService();
             PreencherAudios();
             BindingContext = this;
         }
@@ -71,7 +73,7 @@ namespace SpeakPet
 
                     AdicionarAudioResponse response = audioService.AdicionarAudio(audios);
 
-                    if (response.Sucesso == false)
+                    if (!response.Sucesso)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
                     else
                     {
@@ -100,7 +102,7 @@ namespace SpeakPet
                     int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
                     ExcluirAudioResponse response = audioService.ExcluirAudio(idAudio);
 
-                    if (response.Sucesso == false)
+                    if (!response.Sucesso)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
                     else
                         await DisplayAlert("Sucesso!", "Audio excluído com sucesso.", "Ok");
@@ -131,7 +133,7 @@ namespace SpeakPet
                 {
                     EditarAudioResponse response = audioService.EditarAudio(audio.Id.Value, novoTitulo);
 
-                    if (response.Sucesso == false)
+                    if (!response.Sucesso)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
                     else
                         await DisplayAlert("Sucesso!", "Audio editado com sucesso.", "Ok");
@@ -169,7 +171,7 @@ namespace SpeakPet
                 {
                     AdicionarAudioYouTubeResponse response = audioService.AdicionarAudioYouTube(video.FullName, url, Services.IdUsuarioLogado);
 
-                    if (response.Sucesso == false)
+                    if (!response.Sucesso)
                         await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
                     else
                     {
@@ -181,6 +183,38 @@ namespace SpeakPet
                 {
                     await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
                 }
+            }
+        }
+
+        private async void ReproduzirAudioButton_Clicked(object sender, EventArgs e)
+        {
+
+            int idAudio = int.Parse((sender as Button).CommandParameter.ToString());
+
+            try
+            {
+                InserirReproducaoResponse response = reproducaoService.InserirReproducao(idAudio, Services.IdUsuarioLogado);
+
+                if (!response.Sucesso)
+                    if (response.Reproduzindo)
+                    {
+                        bool confirmacao = await DisplayAlert("Parar Reprodução", "Existe um audio sendo reproduzido no momento, deseja interrompe-lo?", "Confirmar", "Cancelar");
+                        if (confirmacao)
+                        {
+                            DesativarReproducaoResponse desativarResponse = reproducaoService.DesativarReproducao(response.IdReproducao);
+                            response = reproducaoService.InserirReproducao(idAudio, Services.IdUsuarioLogado);
+                        }
+                    }
+                    else
+                        await DisplayAlert("Erro", response.Mensagem, "Tentar Novamente");
+                else
+                {
+                    await DisplayAlert("Sucesso!", "Seu áudio será reproduzido em breve.", "Ok");
+                }
+            }
+            catch
+            {
+                await DisplayAlert("Erro", "Algo está atrapalhando a conexão com o servidor...", "Tentar Novamente");
             }
         }
     }
