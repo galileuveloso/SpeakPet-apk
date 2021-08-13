@@ -1,0 +1,20 @@
+﻿^ContentPage {
+    background-color: white;
+}
+
+.label-primary {
+    font-family: Arial, sans-serif;
+    font-weight: bolder;
+    color: #ff7f00;
+}
+
+.button-login {
+    background-color: #ff7f00;
+    color: white;
+}
+
+.button-forgot-password {
+    color: #ff7f00;
+    background-color: white;
+}
+/*#ff7f00*/

@@ -1,18 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpeakPet.MainPage">
-
+             x:Class="SpeakPet.MainPage"
+             NavigationPage.HasNavigationBar="False"
+             >
+    <ContentPage.Resources>
+        <StyleSheet Source="style/style.css"></StyleSheet>
+    </ContentPage.Resources>
     <StackLayout>
-        <Frame BackgroundColor="#2196F3" Padding="24" CornerRadius="0">
-            <Label Text="Speak Pet" HorizontalTextAlignment="Center" TextColor="White" FontSize="36"/>
-        </Frame>
-        <Label Text="Login:" FontSize="Title" Padding="30,10,30,10"/>
-        <Entry Placeholder="" x:Name="login"/>
-        <Label Text="Senha:" FontSize="Title" Padding="30,10,30,10"/>
-        <Entry Placeholder="" IsPassword="True" x:Name="password"/>
-        <Button Text="Login" Clicked="Login_Clicked"></Button>
-        <Button Text="Register" Clicked="Register_Clicked"></Button>
+        <Image Source="beagleicon.png" Margin="110, 80"></Image>
+        <Label Text="LOGIN" FontSize="20" FontAttributes="Bold" Padding="40,10,30,5" StyleClass="label-primary"/>
+        <Entry x:Name="login" Margin="40,0,30,10"/>
+        <Label Text="PASSWORD" FontSize="20" FontAttributes="Bold" Padding="40,10,30,5" StyleClass="label-primary"/>
+        <Entry IsPassword="True" x:Name="password" Margin="40,0,30,10"/>
+        <Button Text="Forgot Password?" StyleClass="button-forgot-password" Margin="160,0,10,0"></Button>
+        <Button Text="Login" Clicked="Login_Clicked" CornerRadius="25" Margin="30,0" StyleClass="button-login"></Button>
     </StackLayout>
-
 </ContentPage>
