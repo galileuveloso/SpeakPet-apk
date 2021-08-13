@@ -1,16 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SpeakPet.Register">
+             x:Class="SpeakPet.Register"
+             NavigationPage.HasNavigationBar="False"
+             >
+    <ContentPage.Resources>
+        <StyleSheet Source="style/style.css"></StyleSheet>
+    </ContentPage.Resources>
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Login:" FontSize="Title" Padding="30,10,30,10"/>
-            <Entry Placeholder="" x:Name="login"/>
-            <Label Text="Senha:" FontSize="Title" Padding="30,10,30,10"/>
-            <Entry Placeholder="" IsPassword="True" x:Name="password"/>
-            <Label Text="Confirmar senha:" FontSize="Title" Padding="30,10,30,10"/>
-            <Entry Placeholder="" IsPassword="True" x:Name="passwordconfirm"/>
-            <Button Text="Registrar-se" Clicked="Registrar_Clicked"></Button>
+            <Image Source="beagleicon.png" Margin="110, 30"></Image>
+            <Label Text="LOGIN" FontSize="20" FontAttributes="Bold" Padding="40,10,30,5" StyleClass="label-primary"/>
+            <Entry Margin="40,0,30,10" x:Name="login"/>
+            <Label Text="PASSWORD" FontSize="20" FontAttributes="Bold" Padding="40,10,30,5" StyleClass="label-primary"/>
+            <Entry Margin="40,0,30,10" IsPassword="True" x:Name="password"/>
+            <Label Text="CONFIRM PASSWORD" FontSize="20" FontAttributes="Bold" Padding="40,10,30,5" StyleClass="label-primary"/>
+            <Entry Margin="40,0,30,10" IsPassword="True" x:Name="passwordconfirm"/>
+            <Button Text="Already have an account?" Margin="100,0,0,0" StyleClass="button-secondary"></Button>
+            <Button Text="SIGN UP" Clicked="Registrar_Clicked" CornerRadius="25" Margin="30,0" StyleClass="button-primary"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

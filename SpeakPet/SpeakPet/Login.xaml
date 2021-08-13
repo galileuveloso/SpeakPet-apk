@@ -13,7 +13,7 @@
         <Entry x:Name="login" Margin="40,0,30,10"/>
         <Label Text="PASSWORD" FontSize="20" FontAttributes="Bold" Padding="40,10,30,5" StyleClass="label-primary"/>
         <Entry IsPassword="True" x:Name="password" Margin="40,0,30,10"/>
-        <Button Text="Forgot Password?" StyleClass="button-forgot-password" Margin="160,0,10,0"></Button>
-        <Button Text="Login" Clicked="Login_Clicked" CornerRadius="25" Margin="30,0" StyleClass="button-login"></Button>
+        <Button Text="Forgot Password?" StyleClass="button-secondary" Margin="160,0,10,0"></Button>
+        <Button Text="Login" Clicked="Login_Clicked" CornerRadius="25" Margin="30,0" StyleClass="button-primary"></Button>
     </StackLayout>
 </ContentPage>

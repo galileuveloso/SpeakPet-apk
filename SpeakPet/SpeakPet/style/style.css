@@ -8,13 +8,14 @@
     color: #ff7f00;
 }
 
-.button-login {
+.button-primary {
     background-color: #ff7f00;
     color: white;
 }
 
-.button-forgot-password {
+.button-secondary {
     color: #ff7f00;
     background-color: white;
+    text-transform: lowercase;
 }
 /*#ff7f00*/
