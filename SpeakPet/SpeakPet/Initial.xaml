@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SpeakPet.Initial"
+             NavigationPage.HasNavigationBar="False"
+             >
+    <ContentPage.Resources>
+        <StyleSheet Source="style/style.css"></StyleSheet>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout BackgroundColor="#ff7f00">
+            <Image Source="beagleicon.png" Margin="80, 120"></Image>
+            <Button Text="SIGN UP" CornerRadius="25" Margin="30,0" StyleClass="button-singup" BorderColor="White" BorderWidth="1"></Button>
+            <Button Text="LOGIN" CornerRadius="25" Margin="30,0" StyleClass="button-login"></Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

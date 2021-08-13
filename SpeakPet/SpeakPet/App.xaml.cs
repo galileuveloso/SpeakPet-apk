@@ -10,7 +10,7 @@ namespace SpeakPet
         {
             InitializeComponent();
 
-            MainPage = new NavigationPage(new Register());
+            MainPage = new NavigationPage(new Initial());
         }
 
         protected override void OnStart()

@@ -18,4 +18,14 @@
     background-color: white;
     text-transform: lowercase;
 }
+
+.button-login {
+    background-color: white;
+    color: #ff7f00;
+}
+
+.button-singup{
+    background-color: transparent;
+    color: white;
+}
 /*#ff7f00*/
